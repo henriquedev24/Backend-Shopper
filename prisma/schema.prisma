@@ -12,12 +12,12 @@ enum MeasureType {
     GAS
 }
 
-model leituraResposta {
+model LeituraResposta {
     measure_uuid     String      @id @default(uuid())
     customer_code    String      @unique
     measure_datetime DateTime
     measure_type     MeasureType
-    image            String
+    imageURL         String
     confirmed_value  Int
     @@map("leituraResposta")
 }
