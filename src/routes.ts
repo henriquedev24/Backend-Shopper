@@ -1,9 +1,8 @@
 import express from "express";
-import 'dotenv/config'
+import 'dotenv/config';
 import { v4 as uuidv4 } from "uuid";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PrismaClient } from "@prisma/client";
-
 
 const prisma = new PrismaClient();
 const app = express();
@@ -72,8 +71,7 @@ app.post("/upload", async (req, res) => {
       measure_uuid: createLeituraResposta.measure_uuid,
       resposta: createLeituraResposta.resposta,
     });
-  } catch (error) {
-    console.error("Erro ao processar upload:", error);
+  } catch {
     return res.status(500).json({
       error_code: "INTERNAL_SERVER_ERROR",
       error_description: "Ocorreu um erro no servidor.",
@@ -117,8 +115,7 @@ app.patch("/confirm", async (req, res) => {
     });
 
     return res.status(200).json({ message: "Leitura confirmada com sucesso." });
-  } catch (error) {
-    console.error("Erro ao confirmar leitura:", error);
+  } catch {
     return res.status(500).json({
       error_code: "INTERNAL_SERVER_ERROR",
       error_description: "Ocorreu um erro no servidor.",
@@ -164,7 +161,7 @@ app.get("/:customer_code/list", async (req, res) => {
 });
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
@@ -173,8 +170,8 @@ async function testConnection() {
   try {
     await prisma.$connect();
     console.log("Conexão com o banco de dados estabelecida com sucesso!");
-  } catch (error) {
-    console.error("Erro ao conectar ao banco de dados:", error);
+  } catch {
+    console.error("Erro ao conectar ao banco de dados");
   } finally {
     await prisma.$disconnect();
   }

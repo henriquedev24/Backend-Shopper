@@ -1,7 +1,7 @@
 {
   "name": "backend---shopper",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": "src/server.ts",
   "scripts": {
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/routes.ts",
@@ -16,6 +16,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.4",
     "@types/uuid": "^10.0.0",
+    "dotenv": "^16.4.5",
     "nodemon": "^3.1.7",
     "prisma": "^5.20.0",
     "ts-node": "^10.9.2",
@@ -25,7 +26,6 @@
     "@google/generative-ai": "^0.20.0",
     "@prisma/client": "^5.20.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "morgan": "^1.10.0",
     "pg": "^8.13.0",
