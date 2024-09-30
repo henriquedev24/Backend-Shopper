@@ -8,16 +8,16 @@ generator client {
 }
 
 enum MeasureType {
-    WATER
-    GAS
+    WATER 
+    GAS 
 }
 
 model LeituraResposta {
     measure_uuid     String      @id @default(uuid())
     customer_code    String      @unique
-    measure_datetime DateTime
+    measure_datetime DateTime    
     measure_type     MeasureType
     imageURL         String
-    confirmed_value  Int
+    confirmed_value  Int?
     @@map("leituraResposta")
 }

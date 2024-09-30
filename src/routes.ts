@@ -1,16 +1,14 @@
 import express from "express";
+import 'dotenv/config'
 import { v4 as uuidv4 } from "uuid";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PrismaClient } from "@prisma/client";
+
 
 const prisma = new PrismaClient();
 const app = express();
 
 const API_KEY = process.env.GEMINI_API_KEY || "";
-
-app.use((req, res) => {
-
-});
 
 // Rota de consulta ao Gemini
 app.post("/upload", async (req, res) => {
@@ -26,14 +24,14 @@ app.post("/upload", async (req, res) => {
     }
 
     // Verificação de leituras existentes para o mesmo mês
-    const existingReading = await prisma.leituraResposta.findFirst({
+    const leituraExistente = await prisma.leituraResposta.findFirst({
       where: {
         customer_code,
         measure_type,
       },
     });
 
-    if (existingReading) {
+    if (leituraExistente) {
       return res.status(409).json({
         error_code: "DOUBLE_REPORT",
         error_description: "Leitura do mês já foi realizada.",
@@ -45,24 +43,24 @@ app.post("/upload", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const prompt =
       "Necessário o número de leitura do hidrante e a URL da imagem enviada, separados com espaços.";
-    const imageParam = {
+    const imageURL = {
       inlineData: {
         data: image,
-        mimeType: "image/png",
-      },
-    };
+        mimeType: "image/png"
+      }
+    }
 
-    const result = await model.generateContent([prompt, imageParam]);
+    const result = await model.generateContent([prompt, imageURL]);
     const resposta = result.response.text();
 
     // Criando a leitura no banco de dados
     const createLeituraResposta = {
       measure_uuid: uuidv4(),
-      customer_code,
+      customer_code: customer_code,
       resposta: Number(resposta.split(" ")[0]),
-      measure_type,
+      measure_type: measure_type,
       measure_datetime: new Date(measure_datetime),
-      imageURL: resposta.split(" ")[1],
+      imageURL: resposta.split(" ")[1]
     };
 
     await prisma.leituraResposta.create({
@@ -95,18 +93,18 @@ app.patch("/confirm", async (req, res) => {
       });
     }
 
-    const existingReading = await prisma.leituraResposta.findUnique({
+    const leituraExistente = await prisma.leituraResposta.findUnique({
       where: { measure_uuid },
     });
 
-    if (!existingReading) {
+    if (!leituraExistente) {
       return res.status(404).json({
         error_code: "MEASURE_NOT_FOUND",
         error_description: "Leitura não encontrada.",
       });
     }
 
-    if (existingReading.confirmed_value === confirmed_value) {
+    if (leituraExistente.confirmed_value === confirmed_value) {
       return res.status(409).json({
         error_code: "CONFIRMATION_DUPLICATE",
         error_description: "Este valor já foi confirmado anteriormente.",
@@ -166,7 +164,7 @@ app.get("/:customer_code/list", async (req, res) => {
 });
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });

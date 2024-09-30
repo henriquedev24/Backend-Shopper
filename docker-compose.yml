@@ -3,6 +3,8 @@ version: "3.9"
 services:
   database:
     image: postgres:latest
+    container_name: db_shopper
+    restart: always
     ports:
       - 5432:5432
     volumes:
@@ -10,23 +12,12 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=mydb
   web:
     build: .
     ports:
-      - 3000:3000
+      - 5001:5000
     environment:
       - POSTGRES_HOST=postgres
       - GEMINI_API_KEY= <CHAVE API>
       - postgres
-
-  app:
-    build: .
-    container_name: backend_shopper
-    ports:
-      - 3000:3000    
-    volumes:
-      - .:/usr/app
-    links:
-      - database
-    depends_on:
-      - database
